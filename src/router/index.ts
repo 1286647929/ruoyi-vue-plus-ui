@@ -88,6 +88,11 @@ export const constantRoutes: RouteOption[] = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/payok',
+    component: () => import('@/views/card/payok/index.vue'),
+    hidden: true
   }
 ];
 

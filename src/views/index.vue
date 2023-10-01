@@ -2,6 +2,7 @@
   <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
+        <el-button @click="topay()">付款</el-button>
         <h2>RuoYi-Vue-Plus多租户管理系统</h2>
         <p>
           RuoYi-Vue-Plus 是基于 RuoYi-Vue 针对 分布式集群 场景升级(不兼容原框架)
@@ -96,6 +97,17 @@
 </template>
 
 <script setup name="Index" lang="ts">
+import {pay} from "@/api/card/carmi/index"
+const data = {
+  type:"wxpay",
+  name:"VIP",
+  money:"0.01",
+  param:"月卡"
+}
+const topay = async()=>{
+  const res = await pay(data)
+  console.log(res);
+}
 
 const goTarget = (url:string) => {
   window.open(url, '__blank')
