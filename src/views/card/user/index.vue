@@ -101,6 +101,9 @@
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['card:user:edit']"></el-button>
             </el-tooltip>
+            <el-tooltip content="重置密码" placement="top">
+              <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['card:user:resetPwd']"></el-button>
+            </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['card:user:remove']"></el-button>
             </el-tooltip>
@@ -122,7 +125,7 @@
         <el-form-item label="用户账号" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入用户账号" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item v-if="form.userId == undefined" label="密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入用户密码" />
         </el-form-item>
         <el-form-item label="用户类型" prop="userType">
@@ -196,10 +199,11 @@
 </template>
 
 <script setup name="User" lang="ts">
-import { listUser, getUser, delUser, addUser, updateUser, changeUserStatus, expireUser } from "@/api/card/user";
+import { listUser, getUser, delUser, addUser, updateUser, changeUserStatus, expireUser,resetUserPwd } from "@/api/card/user";
 import { UserVO, UserQuery, UserForm, UserexpireVo } from "@/api/card/user/types";
 import { ComponentInternalInstance } from 'vue';
 import { ElForm } from 'element-plus';
+import { to } from "await-to-js";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { card_user_type, sys_normal_disable } = toRefs<any>(proxy?.useDict('card_user_type', 'sys_normal_disable'));
@@ -356,6 +360,21 @@ const handleExpire = (row?: UserexpireVo) => {
   });
 }
 
+/** 重置密码按钮操作 */
+const handleResetPwd = async (row: UserVO) => {
+  const [err, res] = await to(ElMessageBox.prompt('请输入"' + row.userName + '"的新密码', "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    closeOnClickModal: false,
+    inputPattern: /^.{5,20}$/,
+    inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
+  }))
+  if (!err) {
+    await resetUserPwd(row.userId, res.value);
+    proxy?.$modal.msgSuccess("修改成功，新密码是：" + res.value);
+  }
+}
+
 /** 新增按钮操作 */
 const handleAdd = () => {
   dialog.visible = true;
@@ -400,7 +419,7 @@ const submitExpireForm = () => {
   userFormRef.value.validate(async (valid:boolean)=>{
     if (valid){
       buttonLoading.value = true;
-      newForm.userId  = form.value.userId;
+      newForm.userName  = form.value.userName;
       newForm.cardKey = form.value.cardKey;
       await expireUser(newForm).finally(() =>  buttonLoading.value = false);
       proxy?.$modal.msgSuccess("续费成功");

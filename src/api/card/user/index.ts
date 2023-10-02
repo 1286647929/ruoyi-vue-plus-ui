@@ -77,6 +77,26 @@ export const changeUserStatus = (userId: number | string, status: string) => {
 };
 
 /**
+ * 用户密码重置
+ * @param userId 用户ID
+ * @param password 密码
+ */
+export const resetUserPwd = (userId: string | number, password: string) => {
+  const data = {
+    userId,
+    password
+  };
+  return request({
+    url: '/card/user/resetPwd',
+    method: 'put',
+    headers: {
+      isEncrypt: true
+    },
+    data: data
+  });
+};
+
+/**
  * 删除用户信息
  * @param userId
  */
