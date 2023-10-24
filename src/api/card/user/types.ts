@@ -39,6 +39,10 @@ export interface UserVO {
    */
   remark: string;
 
+  /**
+   * 机器码
+   */
+  machineId: string;
 }
 
 export interface UserForm extends BaseEntity {
@@ -91,6 +95,11 @@ export interface UserForm extends BaseEntity {
    * 卡密
    */
   cardKey?: string;
+
+  /**
+   * 机器码
+   */
+  machineId?: string;
 }
 
 export interface UserQuery extends PageQuery {

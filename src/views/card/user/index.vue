@@ -8,12 +8,7 @@
           </el-form-item>
           <el-form-item label="用户类型" prop="userType">
             <el-select v-model="queryParams.userType" placeholder="请选择用户类型" clearable>
-              <el-option
-                v-for="dict in card_user_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              />
+              <el-option v-for="dict in card_user_type" :key="dict.value" :label="dict.label" :value="dict.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="过期时间" style="width: 308px">
@@ -29,12 +24,7 @@
           </el-form-item>
           <el-form-item label="帐号状态" prop="status">
             <el-select v-model="queryParams.status" placeholder="请选择帐号状态" clearable>
-              <el-option
-                v-for="dict in sys_normal_disable"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-              />
+              <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="最后登录IP" prop="loginIp">
@@ -58,7 +48,9 @@
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['card:user:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['card:user:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['card:user:remove']"
+              >删除</el-button
+            >
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['card:user:export']">导出</el-button>
@@ -73,7 +65,7 @@
         <el-table-column label="用户账号" align="center" prop="userName" />
         <el-table-column label="用户类型" align="center" prop="userType">
           <template #default="scope">
-            <dict-tag :options="card_user_type" :value="scope.row.userType"/>
+            <dict-tag :options="card_user_type" :value="scope.row.userType" />
           </template>
         </el-table-column>
         <el-table-column label="过期时间" align="center" prop="expireTime" width="180">
@@ -93,6 +85,7 @@
           </template>
         </el-table-column>
         <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column label="机器码" align="center" prop="machineId" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="续费" placement="top">
@@ -111,13 +104,7 @@
         </el-table-column>
       </el-table>
 
-      <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getList"
-      />
+      <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改用户信息对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -130,44 +117,30 @@
         </el-form-item>
         <el-form-item label="用户类型" prop="userType">
           <el-select v-model="form.userType" placeholder="请选择用户类型">
-            <el-option
-              v-for="dict in card_user_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in card_user_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="过期时间" prop="expireTime">
-          <el-date-picker clearable
-                          v-model="form.expireTime"
-                          type="datetime"
-                          value-format="YYYY-MM-DD HH:mm:ss"
-                          placeholder="请选择过期时间">
+          <el-date-picker clearable v-model="form.expireTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择过期时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="帐号状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in sys_normal_disable"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.value">{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="最后登录IP" prop="loginIp">
           <el-input v-model="form.loginIp" placeholder="请输入最后登录IP" />
         </el-form-item>
         <el-form-item label="最后登录时间" prop="loginDate">
-          <el-date-picker clearable
-                          v-model="form.loginDate"
-                          type="datetime"
-                          value-format="YYYY-MM-DD HH:mm:ss"
-                          placeholder="请选择最后登录时间">
+          <el-date-picker clearable v-model="form.loginDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择最后登录时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="机器码" prop="machineId">
+          <el-input v-model="form.machineId" type="text" placeholder="请输入机器码" clearable />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -247,7 +220,8 @@ const initFormData: UserForm = {
   loginIp: undefined,
   loginDate: undefined,
   remark: undefined,
-  cardKey: undefined,
+  cardKey:undefined,
+  machineId: undefined,
 }
 const data = reactive<PageData<UserForm, UserQuery>>({
   form: {...initFormData},
@@ -279,9 +253,6 @@ const data = reactive<PageData<UserForm, UserQuery>>({
     status: [
       { required: true, message: "帐号状态不能为空", trigger: "change" }
     ],
-    cardKey: [
-      { required: true, message: "卡密不能为空", trigger: "blur" }
-    ]
   }
 });
 
