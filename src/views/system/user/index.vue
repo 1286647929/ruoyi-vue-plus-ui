@@ -320,7 +320,7 @@ const total = ref(0);
 const dateRange = ref<[DateModelType, DateModelType]>(['', '']);
 const deptName = ref('');
 const deptOptions = ref<DeptVO[]>([]);
-const initPassword = ref('123456');
+const initPassword = ref<String>('');
 const postOptions = ref<PostVO[]>([]);
 const roleOptions = ref<RoleVO[]>([]);
 /*** 用户导入参数 */
@@ -561,7 +561,7 @@ const handleAdd = async () => {
   await initTreeData();
   postOptions.value = data.posts;
   roleOptions.value = data.roles;
-  form.value.password = initPassword.value;
+  form.value.password = initPassword.value.toString();
 }
 /** 修改按钮操作 */
 const handleUpdate = async (row?: UserForm) => {
@@ -613,6 +613,9 @@ const resetForm = () => {
 onMounted(() => {
   getTreeSelect() // 初始化部门数据
   getList() // 初始化列表数据
+  proxy?.getConfigKey("sys.user.initPassword").then(response => {
+    initPassword.value = response.data;
+  });
 });
 </script>
 
