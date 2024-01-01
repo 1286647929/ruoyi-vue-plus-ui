@@ -29,6 +29,12 @@
         </el-table-column>
         <el-table-column label="会话编号" align="center" prop="tokenId" :show-overflow-tooltip="true" />
         <el-table-column label="登录名称" align="center" prop="userName" :show-overflow-tooltip="true" />
+        <el-table-column label="客户端" align="center" prop="clientKey" :show-overflow-tooltip="true" />
+        <el-table-column label="设备类型" align="center">
+          <template #default="scope">
+            <dict-tag :options="sys_device_type" :value="scope.row.deviceType" />
+          </template>
+        </el-table-column>
         <el-table-column label="所属部门" align="center" prop="deptName" :show-overflow-tooltip="true" />
         <el-table-column label="主机" align="center" prop="ipaddr" :show-overflow-tooltip="true" />
         <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
@@ -57,8 +63,11 @@
 <script setup name="Online" lang="ts">
 import { forceLogout, list as initData } from "@/api/monitor/online";
 import { OnlineQuery, OnlineVO } from "@/api/monitor/online/types";
+import api from "@/api/system/user";
+import {to} from "await-to-js";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { sys_device_type } = toRefs<any>(proxy?.useDict("sys_device_type"));
 
 const onlineList = ref<OnlineVO[]>([]);
 const loading = ref(true);
@@ -93,10 +102,12 @@ const resetQuery = () => {
 }
 /** 强退按钮操作 */
 const handleForceLogout = async (row: OnlineVO) => {
-  await proxy?.$modal.confirm('是否确认强退名称为"' + row.userName + '"的用户?');
-  await forceLogout(row.tokenId);
-  await getList();
-  proxy?.$modal.msgSuccess("删除成功");
+  const [err] = await to(proxy?.$modal.confirm('是否确认强退名称为"' + row.userName + '"的用户?') as any);
+  if (!err) {
+    await forceLogout(row.tokenId);
+    await getList();
+    proxy?.$modal.msgSuccess("删除成功");
+  }
 }
 
 onMounted(() => {
